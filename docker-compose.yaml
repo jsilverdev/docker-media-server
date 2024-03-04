@@ -9,8 +9,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${MEDIA_SERVER_PATH}/jellyfin:/config
-      - ${MEDIA_PATH}/media/tvseries:/data/tvshows
-      - ${MEDIA_PATH}/media/movies:/data/movies
+      - ${MEDIA_PATH}/media:/data
     ports:
       - ${JELLYFIN_PORT_1:-8096}:8096
       - ${JELLYFIN_PORT_2:-8920}:8920
