@@ -51,19 +51,19 @@ services:
     depends_on:
         - jackett
         - transmission
-  lidarr:
-    image: linuxserver/lidarr:2.1.7
-    container_name: lidarr
+  readarr:
+    image: linuxserver/readarr:0.3.18-develop
+    container_name: readarr
     environment:
       - PUID=${USER_ID:-1000}
       - PGID=${GROUP_ID:-1000}
       - TZ=${TZ:-Etc/UTC}
     volumes:
-      - ${MEDIA_SERVER_PATH}/lidarr:/config
-      - ${MEDIA_PATH}/media/music:/music
+      - ${MEDIA_SERVER_PATH}/readarr:/config
+      - ${MEDIA_PATH}/media/books:/books
       - ${MEDIA_SERVER_PATH}/torrents:/downloads
     ports:
-      - ${LIDARR_PORT:-8686}:8686
+      - ${LIDARR_PORT:-8787}:8787
     restart: unless-stopped
     depends_on:
         - jackett
