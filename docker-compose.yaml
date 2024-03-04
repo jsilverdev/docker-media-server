@@ -100,8 +100,6 @@ services:
       - PYTHON_SETUPTOOLS_VERSION=65.5.1
       - PYTHON_VERSION=3.11.8
       - TZ=${TZ:-Etc/UTC}
-    ports:
-      - "${FLARESOLVER_PORT:-8191}:8191"
     command:
       - /usr/local/bin/python
       - -u
@@ -121,6 +119,4 @@ services:
       - ${MEDIA_SERVER_PATH}/torrents:/downloads
     ports:
       - ${TR_UI_PORT:-9091}:9091
-      - ${TR_PORT:-51413}:51413
-      - ${TR_PORT:-51413}:51413/udp
     restart: unless-stopped
