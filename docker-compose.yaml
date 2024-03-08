@@ -50,19 +50,37 @@ services:
     depends_on:
         - jackett
         - transmission
-  readarr:
-    image: linuxserver/readarr:0.3.18-develop
-    container_name: readarr
+  lazylibrarian:
+    image: linuxserver/lazylibrarian:819bf717-ls38
+    container_name: lazylibrarian
+    environment:
+      - PUID=${USER_ID:-1000}
+      - PGID=${GROUP_ID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - DOCKER_MODS=linuxserver/mods:universal-calibre|linuxserver/mods:lazylibrarian-ffmpeg #optional
+    volumes:
+      - ${MEDIA_SERVER_PATH}/lazylibrarian:/config
+      - ${MEDIA_PATH}/media/books:/books
+      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+    ports:
+      - ${LAZYLIB_PORT:-5299}:5299
+    restart: unless-stopped
+    depends_on:
+        - jackett
+        - transmission
+  mylar3:
+    image: linuxserver/mylar3:0.7.8
+    container_name: mylar3
     environment:
       - PUID=${USER_ID:-1000}
       - PGID=${GROUP_ID:-1000}
       - TZ=${TZ:-Etc/UTC}
     volumes:
-      - ${MEDIA_SERVER_PATH}/readarr:/config
-      - ${MEDIA_PATH}/media/books:/books
+      - ${MEDIA_SERVER_PATH}/mylar3:/config
+      - ${MEDIA_PATH}/media/comics:/comics
       - ${MEDIA_SERVER_PATH}/torrents:/downloads
     ports:
-      - ${LIDARR_PORT:-8787}:8787
+      - ${MYLAR3_PORT:-8090}:8090
     restart: unless-stopped
     depends_on:
         - jackett
