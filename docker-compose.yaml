@@ -26,7 +26,7 @@ services:
     volumes:
       - ${MEDIA_SERVER_PATH}/sonarr:/config
       - ${MEDIA_PATH}/media/tvseries:/tv
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${SONARR_PORT:-8989}:8989
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
     volumes:
       - ${MEDIA_SERVER_PATH}/radarr:/config
       - ${MEDIA_PATH}/media/movies:/movies
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${RADARR_PORT:-7878}:7878
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
     volumes:
       - ${MEDIA_SERVER_PATH}/lazylibrarian:/config
       - ${MEDIA_PATH}/media/books:/books
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${LAZYLIB_PORT:-5299}:5299
     restart: unless-stopped
@@ -78,7 +78,7 @@ services:
       - AUTO_UPDATE=true #optional
     volumes:
       - ${MEDIA_SERVER_PATH}/jackett:/config
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${JACKETT_PORT:-9117}:9117
     restart: unless-stopped
@@ -116,7 +116,7 @@ services:
       - PASS=admin
     volumes:
       - ${MEDIA_SERVER_PATH}/transmission:/config
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${TR_UI_PORT:-9091}:9091
     restart: unless-stopped
