@@ -68,23 +68,6 @@ services:
     depends_on:
         - jackett
         - transmission
-  mylar3:
-    image: linuxserver/mylar3:0.7.8
-    container_name: mylar3
-    environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-    volumes:
-      - ${MEDIA_SERVER_PATH}/mylar3:/config
-      - ${MEDIA_PATH}/media/comics:/comics
-      - ${MEDIA_SERVER_PATH}/torrents:/downloads
-    ports:
-      - ${MYLAR3_PORT:-8090}:8090
-    restart: unless-stopped
-    depends_on:
-        - jackett
-        - transmission
   jackett:
     image: linuxserver/jackett:0.21.1932
     container_name: jackett
