@@ -25,10 +25,6 @@ set -o allexport
 source .env
 set +o allexport
 
-if [[ "$1" == "--with-wg" ]]; then
-    docker compose -f docker-compose.yaml -f docker-compose-wg.yaml up -d
-else
-    docker compose up -d
-fi
+docker compose up -d
 
 sudo chown ${USER_ID}:${GROUP_ID} -R ${MEDIA_PATH}

@@ -120,3 +120,21 @@ services:
     ports:
       - ${TR_UI_PORT:-9091}:9091
     restart: unless-stopped
+  doplarr:
+    profiles:
+      - discord
+    image: "ghcr.io/kiranshila/doplarr:v3.6.3"
+    container_name: doplarr
+    environment:
+      - SONARR__URL=http://sonarr:8989
+      - RADARR__URL=http://radarr:7878
+      - SONARR__API=${SONARR__API}
+      - RADARR__API=${RADARR__API}
+      - DISCORD__TOKEN=${DOPLARR_DISCORD_TOKEN}
+      - DISCORD__MAX_RESULTS=15
+      - DISCORD__REQUESTED_MSG_STYLE=:embed
+      - SONARR__SEASON_FOLDERS=true
+    restart: unless-stopped
+    depends_on:
+      - sonarr
+      - radarr
