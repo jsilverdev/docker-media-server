@@ -126,9 +126,12 @@ services:
   doplarr:
     profiles:
       - discord
-    image: "ghcr.io/kiranshila/doplarr:v3.6.3"
+    image: "linuxserver/doplarr:3.6.3"
     container_name: doplarr
     environment:
+      - PUID=${USER_ID:-1000}
+      - PGID=${GROUP_ID:-1000}
+      - TZ=${TZ:-Etc/UTC}
       - SONARR__URL=http://sonarr:8989
       - RADARR__URL=http://radarr:7878
       - SONARR__API=${SONARR__API}
