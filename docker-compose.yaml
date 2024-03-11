@@ -53,20 +53,19 @@ services:
     depends_on:
         - jackett
         - transmission
-  lazylibrarian:
-    image: linuxserver/lazylibrarian:5d91be30-ls39
-    container_name: lazylibrarian
+  readarr:
+    image: linuxserver/readarr:0.3.19-develop
+    container_name: readarr
     environment:
       - PUID=${USER_ID:-1000}
       - PGID=${GROUP_ID:-1000}
       - TZ=${TZ:-Etc/UTC}
-      - DOCKER_MODS=linuxserver/mods:universal-calibre|linuxserver/mods:lazylibrarian-ffmpeg #optional
     volumes:
-      - ${MEDIA_SERVER_PATH}/lazylibrarian:/config
+      - ${MEDIA_SERVER_PATH}/readarr:/config
       - ${MEDIA_PATH}/media/books:/books
       - ${MEDIA_PATH}/downloads:/downloads
     ports:
-      - ${LAZYLIB_PORT:-5299}:5299
+      - ${LIDARR_PORT:-8787}:8787
     restart: unless-stopped
     depends_on:
         - jackett
