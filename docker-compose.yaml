@@ -19,6 +19,9 @@ services:
       - ${JELLYFIN_PORT_3:-7359}:7359/udp
       - ${JELLYFIN_PORT_4:-1900}:1900/udp
     restart: unless-stopped
+    networks:
+      media-server-net:
+        ipv4_address: 12.5.0.10
   sonarr:
     image: linuxserver/sonarr:4.0.2
     container_name: sonarr
@@ -28,14 +31,15 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${MEDIA_SERVER_PATH}/sonarr:/config
-      - ${MEDIA_PATH}/media/tvseries:/tv
-      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}:/data
     ports:
       - ${SONARR_PORT:-8989}:8989
     restart: unless-stopped
     depends_on:
         - jackett
         - transmission
+    networks:
+      - media-server-net
   radarr:
     image: linuxserver/radarr:5.3.6
     container_name: radarr
@@ -45,14 +49,15 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${MEDIA_SERVER_PATH}/radarr:/config
-      - ${MEDIA_PATH}/media/movies:/movies
-      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}:/data
     ports:
       - ${RADARR_PORT:-7878}:7878
     restart: unless-stopped
     depends_on:
         - jackett
         - transmission
+    networks:
+      - media-server-net
   readarr:
     image: linuxserver/readarr:0.3.19-develop
     container_name: readarr
@@ -62,14 +67,15 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${MEDIA_SERVER_PATH}/readarr:/config
-      - ${MEDIA_PATH}/media/books:/books
-      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}:/data
     ports:
       - ${LIDARR_PORT:-8787}:8787
     restart: unless-stopped
     depends_on:
         - jackett
         - transmission
+    networks:
+      - media-server-net
   jackett:
     image: linuxserver/jackett:0.21.1981
     container_name: jackett
@@ -80,12 +86,13 @@ services:
       - AUTO_UPDATE=true #optional
     volumes:
       - ${MEDIA_SERVER_PATH}/jackett:/config
-      - ${MEDIA_PATH}/downloads:/downloads
     ports:
       - ${JACKETT_PORT:-9117}:9117
     restart: unless-stopped
     depends_on:
         - flaresolverr
+    networks:
+      - media-server-net
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
@@ -107,6 +114,8 @@ services:
       - -u
       - /app/flaresolverr.py
     restart: unless-stopped
+    networks:
+      - media-server-net
   transmission:
     image: linuxserver/transmission:4.0.5
     container_name: transmission
@@ -114,14 +123,19 @@ services:
       - PUID=${USER_ID:-1000}
       - PGID=${GROUP_ID:-1000}
       - TZ=${TZ:-Etc/UTC}
-      - USER=admin
-      - PASS=admin
+      - USER=transmission
+      - PASS=${TR_PASS:-transmission}
     volumes:
       - ${MEDIA_SERVER_PATH}/transmission:/config
-      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}/downloads:/data/downloads
     ports:
       - ${TR_UI_PORT:-9091}:9091
+      - ${TR_PORT:-51413}:51413
+      - ${TR_PORT:-51413}:51413/udp
     restart: unless-stopped
+    networks:
+      media-server-net:
+        ipv4_address: 12.5.0.11
   doplarr:
     profiles:
       - discord
@@ -143,3 +157,14 @@ services:
     depends_on:
       - sonarr
       - radarr
+    networks:
+      - media-server-net
+
+networks:
+  media-server-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 12.5.0.0/16
+          gateway: 12.5.0.1
