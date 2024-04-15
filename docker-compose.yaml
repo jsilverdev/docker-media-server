@@ -69,7 +69,7 @@ services:
       - ${MEDIA_SERVER_PATH}/readarr:/config
       - ${MEDIA_PATH}:/data
     ports:
-      - ${LIDARR_PORT:-8787}:8787
+      - ${READARR_PORT:-8787}:8787
     restart: unless-stopped
     depends_on:
         - jackett
