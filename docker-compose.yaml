@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   jellyfin:
-    image: linuxserver/jellyfin:10.9.6
+    image: linuxserver/jellyfin:10.9.9
     container_name: jellyfin
     environment:
       - PUID=${USER_ID:-1000}
@@ -23,7 +23,7 @@ services:
       media-server-net:
         ipv4_address: 12.5.0.10
   sonarr:
-    image: linuxserver/sonarr:4.0.5
+    image: linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=${USER_ID:-1000}
@@ -41,7 +41,7 @@ services:
     networks:
       - media-server-net
   radarr:
-    image: linuxserver/radarr:5.6.0
+    image: linuxserver/radarr:latest
     container_name: radarr
     environment:
       - PUID=${USER_ID:-1000}
@@ -59,7 +59,7 @@ services:
     networks:
       - media-server-net
   readarr:
-    image: linuxserver/readarr:nightly
+    image: linuxserver/readarr:develop
     container_name: readarr
     environment:
       - PUID=${USER_ID:-1000}
@@ -77,7 +77,7 @@ services:
     networks:
       - media-server-net
   jackett:
-    image: linuxserver/jackett:0.22.89
+    image: linuxserver/jackett:latest
     container_name: jackett
     environment:
       - PUID=${USER_ID:-1000}
@@ -117,7 +117,7 @@ services:
     networks:
       - media-server-net
   transmission:
-    image: linuxserver/transmission:4.0.5
+    image: linuxserver/transmission:4.0.6
     container_name: transmission
     environment:
       - PUID=${USER_ID:-1000}
@@ -139,7 +139,7 @@ services:
   doplarr:
     profiles:
       - discord
-    image: linuxserver/doplarr:3.6.3
+    image: linuxserver/doplarr:latest
     container_name: doplarr
     environment:
       - PUID=${USER_ID:-1000}
