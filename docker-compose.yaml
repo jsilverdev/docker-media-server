@@ -21,6 +21,7 @@ services:
     networks:
       media-server-net:
         ipv4_address: 12.5.0.10
+
   sonarr:
     image: linuxserver/sonarr:latest
     container_name: sonarr
@@ -39,6 +40,7 @@ services:
         - transmission
     networks:
       - media-server-net
+
   radarr:
     image: linuxserver/radarr:latest
     container_name: radarr
@@ -57,24 +59,7 @@ services:
         - transmission
     networks:
       - media-server-net
-  readarr:
-    image: linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-    volumes:
-      - ${MEDIA_SERVER_PATH}/readarr:/config
-      - ${MEDIA_PATH}:/data
-    ports:
-      - ${READARR_PORT:-8787}:8787
-    restart: unless-stopped
-    depends_on:
-        - jackett
-        - transmission
-    networks:
-      - media-server-net
+
   jackett:
     image: linuxserver/jackett:latest
     container_name: jackett
@@ -92,6 +77,7 @@ services:
         - flaresolverr
     networks:
       - media-server-net
+
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
@@ -115,6 +101,7 @@ services:
     restart: unless-stopped
     networks:
       - media-server-net
+
   transmission:
     image: linuxserver/transmission:4.0.6
     container_name: transmission
@@ -135,6 +122,7 @@ services:
     networks:
       media-server-net:
         ipv4_address: 12.5.0.11
+
   doplarr:
     profiles:
       - discord
