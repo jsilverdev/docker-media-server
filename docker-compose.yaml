@@ -2,11 +2,9 @@ services:
   jellyfin:
     image: linuxserver/jellyfin:latest
     container_name: jellyfin
-    environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-      # - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel # Only for Intel GPU
+    env_file:
+      - path: ./default.env
+        required: true
     volumes:
       - ${MEDIA_SERVER_PATH}/jellyfin:/config
       - ${MEDIA_PATH}/media:/data
@@ -25,10 +23,9 @@ services:
   sonarr:
     image: linuxserver/sonarr:latest
     container_name: sonarr
-    environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
+    env_file:
+      - path: ./default.env
+        required: true
     volumes:
       - ${MEDIA_SERVER_PATH}/sonarr:/config
       - ${MEDIA_PATH}:/data
@@ -44,10 +41,9 @@ services:
   radarr:
     image: linuxserver/radarr:latest
     container_name: radarr
-    environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
+    env_file:
+      - path: ./default.env
+        required: true
     volumes:
       - ${MEDIA_SERVER_PATH}/radarr:/config
       - ${MEDIA_PATH}:/data
@@ -63,10 +59,10 @@ services:
   jackett:
     image: linuxserver/jackett:latest
     container_name: jackett
+    env_file:
+      - path: ./default.env
+        required: true
     environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
       - AUTO_UPDATE=true #optional
     volumes:
       - ${MEDIA_SERVER_PATH}/jackett:/config
@@ -81,23 +77,14 @@ services:
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
+    env_file:
+      - path: ./default.env
+        required: true
     environment:
       - CAPTCHA_SOLVER=none
-      - GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
       - LANG=C.UTF-8
       - LOG_HTML=false
       - LOG_LEVEL=info
-      - PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
-      - PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
-      - PYTHON_PIP_VERSION=24.0
-      - PYTHON_SETUPTOOLS_VERSION=65.5.1
-      - PYTHON_VERSION=3.11.8
-      - TZ=${TZ:-Etc/UTC}
-    command:
-      - /usr/local/bin/python
-      - -u
-      - /app/flaresolverr.py
     restart: unless-stopped
     networks:
       - media-server-net
@@ -105,12 +92,12 @@ services:
   transmission:
     image: linuxserver/transmission:4.0.6
     container_name: transmission
+    env_file:
+      - path: ./default.env
+        required: true
     environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-      - USER=transmission
-      - PASS=${TR_PASS:-transmission}
+      - USER=${TR_USER}
+      - PASS=${TR_PASS}
     volumes:
       - ${MEDIA_SERVER_PATH}/transmission:/config
       - ${MEDIA_PATH}/downloads:/data/downloads
@@ -123,27 +110,35 @@ services:
       media-server-net:
         ipv4_address: 12.5.0.11
 
-  doplarr:
-    profiles:
-      - discord
-    image: linuxserver/doplarr:latest
-    container_name: doplarr
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    env_file:
+      - path: ./default.env
+        required: true
     environment:
-      - PUID=${USER_ID:-1000}
-      - PGID=${GROUP_ID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-      - SONARR__URL=http://sonarr:8989
-      - RADARR__URL=http://radarr:7878
-      - SONARR__API=${SONARR__API}
-      - RADARR__API=${RADARR__API}
-      - DISCORD__TOKEN=${DOPLARR_DISCORD_TOKEN}
-      - DISCORD__MAX_RESULTS=15
-      - DISCORD__REQUESTED_MSG_STYLE=:embed
-      - SONARR__SEASON_FOLDERS=true
+      - LOG_LEVEL=debug
+    ports:
+      - ${JELLYSEERR_PORT:-5055}:5055
+    volumes:
+      - ${MEDIA_SERVER_PATH}/jellyseerr-data:/app/config
     restart: unless-stopped
     depends_on:
       - sonarr
       - radarr
+    networks:
+      - media-server-net
+  requestrr:
+    image: thomst08/requestrr
+    container_name: requestrr
+    env_file:
+      - path: ./default.env
+        required: true
+    ports:
+    - ${REQUESTRR_PORT:-4545}:4545
+    volumes:
+    - ${MEDIA_SERVER_PATH}/requestrr-config:/root/config
+    restart: unless-stopped
     networks:
       - media-server-net
 
