@@ -10,7 +10,6 @@
   - [Download](#download)
   - [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
 - [How to use](#how-to-use)
-  - [File sharing and backup](#file-sharing-and-backup)
   - [Media](#media)
 - [Extra](#extra)
   - [laptop](#laptop)
@@ -58,7 +57,6 @@ My directory organization is as follows:
 ├── media-server
 |   ├── jackett
 |   ├── jellyfin
-|   ├── lazylibrarian
 |   ├── radarr
 |   └── sonarr
 └── media-content
