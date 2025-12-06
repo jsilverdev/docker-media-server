@@ -19,6 +19,8 @@ services:
     networks:
       media-server-net:
         ipv4_address: 12.5.0.10
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   sonarr:
     image: linuxserver/sonarr:latest
@@ -37,6 +39,8 @@ services:
         - transmission
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   radarr:
     image: linuxserver/radarr:latest
@@ -55,6 +59,8 @@ services:
         - transmission
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   jackett:
     image: linuxserver/jackett:latest
@@ -73,6 +79,8 @@ services:
         - flaresolverr
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -88,9 +96,11 @@ services:
     restart: unless-stopped
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   transmission:
-    image: linuxserver/transmission:4.0.6
+    image: linuxserver/transmission:latest
     container_name: transmission
     env_file:
       - path: ./default.env
@@ -109,6 +119,8 @@ services:
     networks:
       media-server-net:
         ipv4_address: 12.5.0.11
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -128,8 +140,10 @@ services:
       - radarr
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
   requestrr:
-    image: thomst08/requestrr
+    image: thomst08/requestrr:latest
     container_name: requestrr
     env_file:
       - path: ./default.env
@@ -141,6 +155,8 @@ services:
     restart: unless-stopped
     networks:
       - media-server-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 networks:
   media-server-net:
