@@ -105,7 +105,7 @@ services:
         required: true
     volumes:
       - ${MEDIA_SERVER_PATH}/qbittorrent:/config
-      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}/downloads:/data/downloads
     ports:
       - ${QBT_UI_PORT:-8080}:8080
       - ${QBT_PORT:-6881}:6881
