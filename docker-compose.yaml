@@ -36,7 +36,6 @@ services:
     restart: unless-stopped
     depends_on:
         - jackett
-        - transmission
     networks:
       - media-server-net
     labels:
@@ -56,7 +55,6 @@ services:
     restart: unless-stopped
     depends_on:
         - jackett
-        - transmission
     networks:
       - media-server-net
     labels:
@@ -99,26 +97,23 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
 
-  transmission:
-    image: linuxserver/transmission:latest
-    container_name: transmission
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
     env_file:
       - path: ./default.env
         required: true
-    environment:
-      - USER=${TR_USER}
-      - PASS=${TR_PASS}
     volumes:
-      - ${MEDIA_SERVER_PATH}/transmission:/config
-      - ${MEDIA_PATH}/downloads:/data/downloads
+      - ${MEDIA_SERVER_PATH}/qbittorrent:/config
+      - ${MEDIA_PATH}/downloads:/downloads
     ports:
-      - ${TR_UI_PORT:-9091}:9091
-      - ${TR_PORT:-51413}:51413
-      - ${TR_PORT:-51413}:51413/udp
+      - ${QBT_UI_PORT:-8080}:8080
+      - ${QBT_PORT:-6881}:6881
+      - ${QBT_PORT:-6881}:6881/udp
     restart: unless-stopped
     networks:
       media-server-net:
-        ipv4_address: 12.5.0.11
+        ipv4_address: 12.5.0.12
     labels:
       com.centurylinklabs.watchtower.enable: true
 
