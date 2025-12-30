@@ -1,59 +1,49 @@
-- [Resume](#resume)
-- [Recommended](#recommended)
+- [Summary](#summary)
 - [Requirements](#requirements)
-  - [Install the rest of apps](#install-the-rest-of-apps)
-  - [Static ip](#static-ip)
-- [Config to auto download.](#config-to-auto-download)
+  - [Installation](#installation)
+- [Auto-download configuration](#auto-download-configuration)
   - [General](#general)
-  - [Sonarr / (TV/Series)](#sonarr--tvseries)
-  - [Radarr / (Movies)](#radarr--movies)
-  - [Download](#download)
-  - [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
-- [How to use](#how-to-use)
-  - [Media](#media)
-- [Extra](#extra)
-  - [laptop](#laptop)
+  - [Sonarr (TV)](#sonarr-tv)
+  - [Radarr (Movies)](#radarr-movies)
+- [Request UIs (Jellyseerr / Requestrr)](#request-uis-jellyseerr--requestrr)
+- [Services and default ports](#services-and-default-ports)
+- [Downloads](#downloads)
+- [Accessing content](#accessing-content)
+- [Usage](#usage)
 
-# Resume
+## Summary
 
-We are going to set up a server so you can have a **multimedia center** in your home and you can also **make your backups** of important stuff in the same place!
-Multimedia:
+This repository deploys a home media server stack with Docker Compose including:
 
-- Movies
-- TV
-- Books
+- Jellyfin (media server)
+- Sonarr (TV series)
+- Radarr (movies)
+- Jackett (indexers)
+- FlareSolverr (CAPTCHA resolver for some indexers)
+- qBittorrent (download client)
+- Jellyseerr (request UI for Jellyfin)
+- Requestrr (optional request bot)
 
-# Recommended
+## Requirements
 
-- Set this up on a laptop or cpu that you don't use and can be on all day.
-- Install Debian without GUI (GNOME), this will consume less resources and you won't need it.
-- For the system you only need 30gb, the rest will be for your files.
-- Connect the laptop/pc via ethernet, wifi can get slow or slow down your wifi for all other uses.
-- Do not open ports, use WireGuard.
-- Seed the files at least 1.0 ratio.
-
-# Requirements
-
-- [debian/debian based distro](https://brockar.github.io/easy-download-debian/)
-- [your user with sudo](https://gcore.com/learning/how-to-add-user-to-sudoers-in-debian/)
+- A user with sudo privileges
 - git and curl (`sudo apt install git curl`)
-- [docker and docker compose](https://docs.docker.com/engine/install/)
-- [Static ip](#static-ip)
+- Docker and Docker Compose
+- Copy `example.env` to `.env` and edit `MEDIA_SERVER_PATH` and `MEDIA_PATH` to match your folders
 
-## Install the rest of apps
+### Installation
 
-Download this repo
+Clone the repo:
 
 ```bash
 git clone https://github.com/jsilverdev/docker-media-server.git
+cd docker-media-server
 ```
 
-Make the folders you need.
-My directory organization is as follows:
+Create the folders you will use. Example layout:
 
 ```text
 /home/user/
-├── backup
 ├── media-server
 |   ├── jackett
 |   ├── jellyfin
@@ -61,131 +51,79 @@ My directory organization is as follows:
 |   └── sonarr
 └── media-content
     └── media
-    |   ├── movies
-    |   ├── books
-    |   └── tv
+        ├── movies
+        ├── books
+        └── tvseries
     └── downloads
 ```
 
-Modify the docker compose with your paths, on each `volumes:` on each container.
+Copy `example.env` to `.env` and edit `MEDIA_SERVER_PATH` and `MEDIA_PATH` to match your folders.
 
----
-
-Here we have all ready, now just
+Start the stack (use the provided script):
 
 ```bash
-docker-compose up -d
+chmod +x ./init.sh
+./init.sh
 ```
 
 
-## Static ip
 
-```bash
-ip a
-```
+## Auto-download configuration
 
-Look for enXXX: inet , for example eno1 o enp1s0: `192.168.100.X`.
+### General
 
-Now configure to static your ip
+Configure Jackett at `http://localhost:9117` to add indexers (e.g. 1337x, EZTV) and obtain Torznab feeds and API keys.
 
-```bash
-sudo nano /etc/network/interfaces
-```
+Configure qBittorrent Web UI (default `http://localhost:8080`) for speed limits and schedules as needed.
 
-from
+### Sonarr (TV)
 
-```bash
-# The loopback network interface
-auto lo
-iface lo inet loopback
+Interface: `http://localhost:8989`
 
-# The primary network interface
-auto enp1s0
-iface enp1s0 inet dhcp
-```
+Settings > Indexers: add Jackett indexers (filter for TV shows).
 
-to
+### Radarr (Movies)
 
-```bash
-# The loopback network interface
-auto lo
-iface lo inet loopback
+Interface: `http://localhost:7878`
 
-#The primary network interface
-auto enp1s0
-iface enp1s0 inet static
-  address 192.168.100.100 # Select your ip, i recommend .100, u can select from 2 to 255 but if is low, can fails.
-  netmask 255.255.255.0
-  gateway 192.168.100.1 # The same as your initial ip but with an 1 at the least
-```
+Settings > Indexers: add Jackett indexers (filter for movies).
 
-# Config to auto download.
+## Request UIs (Jellyseerr / Requestrr)
 
-## General
+You can expose request interfaces so users can request movies or TV shows for the server:
 
-Configure **Jackett** (localhost:9117) to obtain the indexers (from where the torrents are obtained).
-Add some (1337x, EZTV for example) and save them.
+- Jellyseerr: Web UI at `http://localhost:5055` (default). Configure connections to Jellyfin, Sonarr and Radarr in the Jellyseerr settings.
+- Requestrr: Web UI at `http://localhost:4545` (default). Configure it to forward requests to Sonarr/Radarr and to your notification/chat platform.
 
-From this page we are going to grab the Torznab Feed and the KEY API for Sonarr, Radarr and Lidarr.
+Both services read configuration from the environment and volumes defined in `docker-compose.yaml`. Adjust ports in `example.env` if needed.
 
-Configure **qBitorrent** to download at the speeds you want at the times you want.
-(localhost:8080)
+If you want users to request content via a friendly UI, enable and configure `jellyseerr` (recommended) and/or `requestrr`.
 
-Configuration > Speed > Alternative speed limits.
-Select the speeds.
-Check `Schedule the use of alternative rate limits` and select the schedules.
-Save it.
+## Services and default ports
 
-## Sonarr / (TV/Series)
+- Jellyfin: 8096 (HTTP), 8920 (optional HTTPS)
+- Sonarr: 8989
+- Radarr: 7878
+- Jackett: 9117
+- FlareSolverr: used internally by Jackett
+- qBittorrent (Web UI): 8080
+- Jellyseerr: 5055
+- Requestrr: 4545
 
-(localhost:8989)
-Settings > Indexers.
-Add the indexers from Jackett.
-Just select TVs, not movies.
+> Note: Ports can be overridden with environment variables in `default.env`.
 
-You can also configure the rest as you wish.
+## Downloads
 
-## Radarr / (Movies)
+Add series in Sonarr and movies in Radarr. Both use qBittorrent to download and move files into the `MEDIA_PATH` locations.
 
-(localhost:7878/)
-Do the same as in Sonar but with series.
+## Accessing content
 
-## Download
+Open Jellyfin at `http://localhost:8096` (or `https://localhost:8920` if you configure TLS). From other devices on your LAN, replace `localhost` with the server IP.
 
-Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr) or music (Lidarr).
+## Usage
 
-You can view the status of downloads in the applications themselves or in qBittorrent.
+- Add/monitor content in Sonarr/Radarr.
+- Let qBittorrent download and complete transfers.
+- Stream content in Jellyfin.
 
-## Enjoy your content (and seed it!).
 
-at http://localhost:8097 or on your TV / Mobile.
-
-# How to use
-
-## Media
-
-Search for the content you want to download in its respective application.
-Wait for it to download.
-Watch it on Jellyfin.
-
-# Extra
-
-## laptop
-
-If u server is a laptop, run the following commands:
-
-`apt install vbetool`
-to screen off
-`sudo vbetool dpms off`
-
-to screen on
-`sudo vbetool dpms on`
-
-to close screen and dont turn off
-
-```bash
-sudo nano /etc/systemd/logind.conf
-```
-
-and change `#HandleLidSwitch=suspend` to
-HandleLidSwitch=ignore
