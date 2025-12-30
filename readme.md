@@ -47,7 +47,10 @@ Create the folders you will use. Example layout:
 ├── media-server
 |   ├── jackett
 |   ├── jellyfin
+|   ├── jellyseerr-data
+|   ├── qbittorrent
 |   ├── radarr
+|   ├── requestrr-config
 |   └── sonarr
 └── media-content
     └── media
