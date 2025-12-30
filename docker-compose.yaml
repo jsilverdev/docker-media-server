@@ -103,13 +103,16 @@ services:
     env_file:
       - path: ./default.env
         required: true
+    environment:
+      - WEBUI_PORT=${QBT_UI_PORT:-8080}
+      - TORRENTING_PORT=${QBT_PORT:-6881}
     volumes:
       - ${MEDIA_SERVER_PATH}/qbittorrent:/config
       - ${MEDIA_PATH}/downloads:/data/downloads
     ports:
-      - ${QBT_UI_PORT:-8080}:8080
-      - ${QBT_PORT:-6881}:6881
-      - ${QBT_PORT:-6881}:6881/udp
+      - ${QBT_UI_PORT:-8080}:${QBT_UI_PORT:-8080}
+      - ${QBT_PORT:-6881}:${QBT_PORT:-6881}
+      - ${QBT_PORT:-6881}:${QBT_PORT:-6881}/udp
     restart: unless-stopped
     networks:
       media-server-net:
