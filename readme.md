@@ -110,7 +110,7 @@ If you want users to request content via a friendly UI, enable and configure `je
 - Jellyseerr: 5055
 - Requestrr: 4545
 
-> Note: Ports can be overridden with environment variables in `default.env`.
+> Note: Ports can be overridden with environment variables in `.env`.
 
 ## Downloads
 
