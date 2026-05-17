@@ -141,7 +141,7 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
   requestrr:
-    image: thomst08/requestrr:latest
+    image: thomst08/requestrr:dev-ratelimit
     container_name: requestrr
     env_file:
       - path: ./default.env
