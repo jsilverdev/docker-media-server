@@ -105,7 +105,7 @@ services:
         required: true
     environment:
       - WEBUI_PORTS=${QBT_UI_PORT:-8080}/tcp
-      - LIBTORRENT=v2
+      - LIBTORRENT=v1
       - VPN_ENABLED=true
       - VPN_CONF=wg0
       - VPN_PROVIDER=generic
